@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>La Brasa Dorada — Restaurante</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream: #F5F0E8;
+      --dark: #1A1208;
+      --gold: #C9963A;
+      --gold-light: #E8B85A;
+      --brown: #3D2B1A;
+      --text-muted: #7A6A55;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 5%;
+      background: rgba(26,18,8,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(201,150,58,0.2);
+      transition: all 0.3s;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+    .logo span { color: var(--cream); font-style: italic; }
+    .nav-links {
+      display: flex; gap: 2.5rem; list-style: none;
+    }
+    .nav-links a {
+      color: var(--cream); text-decoration: none;
+      font-size: 0.85rem; font-weight: 500; letter-spacing: 1.5px;
+      text-transform: uppercase;
+      position: relative; padding-bottom: 3px;
+      transition: color 0.3s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px; background: var(--gold);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta {
+      background: var(--gold); color: var(--dark) !important;
+      padding: 0.5rem 1.4rem !important; border-radius: 2px;
+      font-weight: 500 !important;
+    }
+    .nav-cta:hover { background: var(--gold-light) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 24px; height: 2px; background: var(--cream); transition: 0.3s; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--brown) 60%, #5A3A1A 100%);
+      display: flex; align-items: center;
+      position: relative; overflow: hidden;
+    }
+    .hero-bg-text {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(6rem, 18vw, 18rem);
+      color: rgba(201,150,58,0.05);
+      white-space: nowrap; pointer-events: none;
+      user-select: none; letter-spacing: -5px;
+    }
+    .hero-line {
+      position: absolute; top: 0; right: 25%;
+      width: 1px; height: 100%;
+      background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+      opacity: 0.3;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 0 5%; max-width: 750px;
+      animation: fadeUp 1s ease both;
+    }
+    .hero-badge {
+      display: inline-block;
+      border: 1px solid var(--gold); color: var(--gold);
+      padding: 0.3rem 1rem; font-size: 0.75rem;
+      letter-spacing: 3px; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 1s ease 0.1s both;
+    }
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      color: var(--cream); line-height: 1.1;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 1s ease 0.2s both;
+    }
+    h1 em { color: var(--gold); font-style: italic; }
+    .hero-desc {
+      color: rgba(245,240,232,0.65); font-size: 1.05rem;
+      line-height: 1.8; max-width: 480px;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 1s ease 0.3s both;
+    }
+    .hero-btns {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp 1s ease 0.4s both;
+    }
+    .btn-primary {
+      background: var(--gold); color: var(--dark);
+      padding: 0.9rem 2.2rem; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;
+      text-decoration: none; display: inline-block;
+      transition: all 0.3s; border-radius: 2px;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent; color: var(--cream);
+      padding: 0.9rem 2.2rem; border: 1px solid rgba(245,240,232,0.4);
+      cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 400;
+      font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;
+      text-decoration: none; display: inline-block;
+      transition: all 0.3s; border-radius: 2px;
+    }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+    .hero-stats {
+      position: absolute; right: 5%; bottom: 10%;
+      display: flex; gap: 3rem;
+      animation: fadeUp 1s ease 0.5s both;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem; color: var(--gold); font-weight: 700;
+    }
+    .stat-label {
+      font-size: 0.7rem; color: rgba(245,240,232,0.5);
+      letter-spacing: 2px; text-transform: uppercase;
+    }
+
+    /* ── SECTIONS COMMON ── */
+    section { padding: 6rem 5%; }
+    .section-label {
+      font-size: 0.72rem; letter-spacing: 3px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.8rem;
+    }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.2; margin-bottom: 1rem;
+    }
+
+    /* ── ABOUT ── */
+    #nosotros {
+      background: var(--dark);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
+      align-items: center;
+    }
+    #nosotros h2, #nosotros p { color: var(--cream); }
+    #nosotros p { color: rgba(245,240,232,0.6); line-height: 1.9; font-size: 1rem; margin-bottom: 1.5rem; }
+    .about-img {
+      position: relative; height: 480px;
+    }
+    .about-img-main {
+      width: 80%; height: 100%;
+      background: linear-gradient(135deg, var(--brown), var(--gold));
+      border-radius: 4px; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .about-img-main span {
+      font-size: 6rem; opacity: 0.4;
+    }
+    .about-img-accent {
+      position: absolute; bottom: -20px; right: 0;
+      width: 55%; height: 55%;
+      background: var(--gold);
+      border-radius: 4px; display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; color: var(--dark); text-align: center;
+      padding: 1.5rem; line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* ── MENU ── */
+    #menu { background: var(--cream); }
+    .menu-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem; margin-top: 3rem;
+    }
+    .menu-card {
+      background: white;
+      border-radius: 4px; overflow: hidden;
+      box-shadow: 0 2px 20px rgba(26,18,8,0.06);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+    }
+    .menu-card:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(26,18,8,0.12); }
+    .menu-card-img {
+      height: 180px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 4rem;
+    }
+    .menu-card-img.c1 { background: linear-gradient(135deg, #3D2B1A, #6B4C2A); }
+    .menu-card-img.c2 { background: linear-gradient(135deg, #1A3025, #2D5A40); }
+    .menu-card-img.c3 { background: linear-gradient(135deg, #2A1A3D, #4A3070); }
+    .menu-card-body { padding: 1.5rem; }
+    .menu-card-body h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; margin-bottom: 0.4rem;
+    }
+    .menu-card-body p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1rem; }
+    .menu-card-footer {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .price { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--gold); font-weight: 700; }
+    .tag {
+      font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase;
+      background: rgba(201,150,58,0.1); color: var(--gold);
+      padding: 0.25rem 0.7rem; border-radius: 20px;
+    }
+
+    /* ── RESERVA ── */
+    #reserva {
+      background: var(--brown);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center;
+    }
+    #reserva h2 { color: var(--cream); }
+    #reserva .section-label { color: var(--gold-light); }
+    #reserva > div:first-child p { color: rgba(245,240,232,0.6); line-height: 1.9; margin-top: 1rem; }
+    .info-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      margin-top: 1.5rem;
+    }
+    .info-icon {
+      width: 40px; height: 40px; flex-shrink: 0;
+      background: rgba(201,150,58,0.15);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .info-text h4 { color: var(--cream); font-size: 0.85rem; font-weight: 500; margin-bottom: 0.2rem; }
+    .info-text p { color: rgba(245,240,232,0.5); font-size: 0.82rem; }
+    form {
+      background: rgba(245,240,232,0.04);
+      border: 1px solid rgba(201,150,58,0.2);
+      border-radius: 6px; padding: 2.5rem;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    label { font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; color: rgba(245,240,232,0.5); }
+    input, select, textarea {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(201,150,58,0.2);
+      color: var(--cream); padding: 0.75rem 1rem;
+      border-radius: 3px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+      transition: border-color 0.3s; outline: none; width: 100%;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+    select option { background: var(--brown); }
+    textarea { resize: vertical; min-height: 80px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .btn-form {
+      width: 100%; margin-top: 1rem;
+      background: var(--gold); color: var(--dark);
+      padding: 1rem; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; font-weight: 500;
+      font-size: 0.9rem; letter-spacing: 1.5px; text-transform: uppercase;
+      border-radius: 3px; transition: all 0.3s;
+    }
+    .btn-form:hover { background: var(--gold-light); }
+    .success-msg {
+      display: none; text-align: center; padding: 1rem;
+      color: var(--gold); font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      border-top: 1px solid rgba(201,150,58,0.15);
+      padding: 3rem 5%; display: flex;
+      justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1.5rem;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--gold); }
+    .footer-logo span { color: var(--cream); font-style: italic; }
+    .footer-links { display: flex; gap: 2rem; list-style: none; }
+    .footer-links a { color: rgba(245,240,232,0.4); font-size: 0.8rem; text-decoration: none; transition: color 0.3s; }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy { color: rgba(245,240,232,0.25); font-size: 0.75rem; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal {
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; flex-direction: column; position: absolute;
+        top: 100%; left: 0; right: 0;
+        background: rgba(26,18,8,0.98); padding: 2rem 5%; gap: 1.5rem; }
+      .nav-links.open { display: flex; }
+      .hamburger { display: flex; }
+      #nosotros, #reserva { grid-template-columns: 1fr; gap: 3rem; }
+      .about-img { height: 300px; }
+      .hero-stats { position: static; padding: 2rem 5% 0; flex-wrap: wrap; }
+      .form-row { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; }
+      .hero-content { padding-top: 100px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="logo">La Brasa <span>Dorada</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#menu">Menú</a></li>
+    <li><a href="#reserva">Reservas</a></li>
+    <li><a href="#reserva" class="nav-cta">Reservar mesa</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-text">BRASA</div>
+  <div class="hero-line"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Desde 2008 · La Paz, Bolivia</div>
+    <h1>Una experiencia <em>única</em> en cada bocado</h1>
+    <p class="hero-desc">Cocina de autor con ingredientes locales seleccionados. Cada plato es una historia contada con fuego lento y pasión boliviana.</p>
+    <div class="hero-btns">
+      <a href="#menu" class="btn-primary">Ver menú</a>
+      <a href="#reserva" class="btn-outline">Reservar mesa</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">15+</div>
+      <div class="stat-label">Años de experiencia</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">40+</div>
+      <div class="stat-label">Platos en el menú</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4.9★</div>
+      <div class="stat-label">Valoración clientes</div>
+    </div>
+  </div>
+</section>
+
+<!-- NOSOTROS -->
+<section id="nosotros">
+  <div class="about-img reveal">
+    <div class="about-img-main"><span>🔥</span></div>
+    <div class="about-img-accent">"La cocina boliviana merece brillar en el mundo"</div>
+  </div>
+  <div class="reveal">
+    <p class="section-label">Nuestra historia</p>
+    <h2>Pasión por la gastronomía boliviana</h2>
+    <p>Nacimos con una misión clara: rescatar los sabores tradicionales de Bolivia y presentarlos con técnica moderna. Cada ingrediente que usamos es seleccionado directamente de productores locales.</p>
+    <p>Nuestro chef principal, formado en Europa y enamorado de su tierra, creó un menú que fusiona lo mejor de ambos mundos sin perder la esencia boliviana.</p>
+    <a href="#reserva" class="btn-primary">Reservar ahora</a>
+  </div>
+</section>
+
+<!-- MENÚ -->
+<section id="menu">
+  <div class="reveal" style="text-align:center; max-width:550px; margin:0 auto;">
+    <p class="section-label">Nuestros platos</p>
+    <h2>Un menú para cada ocasión</h2>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-card reveal">
+      <div class="menu-card-img c1">🥩</div>
+      <div class="menu-card-body">
+        <h3>Lomo a la Brasa</h3>
+        <p>Corte premium de res criolla, marinado 24 horas en hierbas del altiplano, braseado a fuego lento.</p>
+        <div class="menu-card-footer">
+          <span class="price">Bs. 95</span>
+          <span class="tag">Signature</span>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card reveal">
+      <div class="menu-card-img c2">🫘</div>
+      <div class="menu-card-body">
+        <h3>Sopa de Maní Premium</h3>
+        <p>Receta tradicional paceña elevada con caldo de res artesanal y papas nativas seleccionadas.</p>
+        <div class="menu-card-footer">
+          <span class="price">Bs. 45</span>
+          <span class="tag">Tradicional</span>
+        </div>
+      </div>
+    </div>
+    <div class="menu-card reveal">
+      <div class="menu-card-img c3">🍮</div>
+      <div class="menu-card-body">
+        <h3>Mousse de Cacao Boliviano</h3>
+        <p>Postre de autor elaborado con cacao orgánico del Beni, ganache y esencia de vainilla de los yungas.</p>
+        <div class="menu-card-footer">
+          <span class="price">Bs. 35</span>
+          <span class="tag">Postre</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVA -->
+<section id="reserva">
+  <div class="reveal">
+    <p class="section-label">Contáctanos</p>
+    <h2>Reserva tu mesa</h2>
+    <p>Garantiza tu lugar para una noche especial. Atendemos reservas con 24 horas de anticipación.</p>
+    <div class="info-item">
+      <div class="info-icon">📍</div>
+      <div class="info-text">
+        <h4>Dirección</h4>
+        <p>Av. 16 de Julio 1234, La Paz</p>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">🕐</div>
+      <div class="info-text">
+        <h4>Horario</h4>
+        <p>Lun–Sáb: 12:00 – 22:30<br/>Dom: 12:00 – 18:00</p>
+      </div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">📞</div>
+      <div class="info-text">
+        <h4>Teléfono</h4>
+        <p>+591 2 222-3344</p>
+      </div>
+    </div>
+  </div>
+  <div class="reveal">
+    <form id="reservaForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" placeholder="Tu nombre" required/>
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="tel" placeholder="+591 7xxxxxxx" required/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" required/>
+        </div>
+        <div class="form-group">
+          <label>Hora</label>
+          <input type="time" min="12:00" max="22:00" required/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Personas</label>
+          <select>
+            <option>1 persona</option>
+            <option>2 personas</option>
+            <option>3-4 personas</option>
+            <option>5-6 personas</option>
+            <option>Grupo grande (+7)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Ocasión</label>
+          <select>
+            <option>Cena casual</option>
+            <option>Cumpleaños</option>
+            <option>Aniversario</option>
+            <option>Reunión de negocios</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group full">
+          <label>Notas especiales</label>
+          <textarea placeholder="Alergias, preferencias, decoración especial..."></textarea>
+        </div>
+      </div>
+      <button type="button" class="btn-form" onclick="enviarReserva()">Confirmar reserva</button>
+      <p class="success-msg" id="successMsg">✓ ¡Reserva recibida! Te contactaremos pronto.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">La Brasa <span>Dorada</span></div>
+  <ul class="footer-links">
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#menu">Menú</a></li>
+    <li><a href="#reserva">Reservas</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 La Brasa Dorada. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+  // Hamburger menu
+  function toggleMenu() {
+    document.getElementById('navLinks').classList.toggle('open');
+  }
+
+  // Close menu on link click
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 100);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Form submit
+  function enviarReserva() {
+    const inputs = document.querySelectorAll('#reservaForm input[required]');
+    let valid = true;
+    inputs.forEach(i => { if (!i.value) { i.style.borderColor = '#e05'; valid = false; } else { i.style.borderColor = ''; } });
+    if (!valid) return;
+    document.getElementById('successMsg').style.display = 'block';
+    setTimeout(() => document.getElementById('successMsg').style.display = 'none', 4000);
+  }
+
+  // Set min date for reservation
+  const dateInput = document.querySelector('input[type="date"]');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.min = today;
+  }
+</script>
+</body>
+</html>
