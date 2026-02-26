@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClientesPro — Gestión de Clientes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0D0F14;
+      --surface: #13161D;
+      --surface2: #1A1E28;
+      --border: rgba(255,255,255,0.07);
+      --accent: #00E5C3;
+      --accent2: #0099FF;
+      --danger: #FF4D6D;
+      --warning: #FFB830;
+      --text: #E8ECF4;
+      --muted: #5A6075;
+      --muted2: #8892A4;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Epilogue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── SIDEBAR ── */
+    aside {
+      width: 240px; flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 2rem 1.5rem;
+      position: sticky; top: 0; height: 100vh;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem; font-weight: 800;
+      color: var(--text); margin-bottom: 0.3rem;
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--accent); }
+    .logo-sub { font-size: 0.7rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2.5rem; }
+
+    .nav-section { font-size: 0.65rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem; margin-top: 1.5rem; }
+    .nav-item {
+      display: flex; align-items: center; gap: 0.7rem;
+      padding: 0.65rem 0.8rem; border-radius: 6px;
+      color: var(--muted2); font-size: 0.88rem;
+      cursor: pointer; transition: all 0.2s;
+      margin-bottom: 0.2rem;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: rgba(0,229,195,0.08); color: var(--accent); border-color: rgba(0,229,195,0.15); }
+    .nav-item .icon { font-size: 1rem; width: 20px; text-align: center; }
+
+    .sidebar-footer { margin-top: auto; }
+    .user-chip {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.8rem; background: var(--surface2);
+      border-radius: 8px; border: 1px solid var(--border);
+    }
+    .avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem; font-weight: 600; color: var(--bg);
+      font-family: 'Syne', sans-serif; flex-shrink: 0;
+    }
+    .user-info h4 { font-size: 0.82rem; font-weight: 500; }
+    .user-info p { font-size: 0.7rem; color: var(--muted); }
+
+    /* ── MAIN ── */
+    main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* topbar */
+    .topbar {
+      padding: 1.5rem 2.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--surface);
+    }
+    .topbar h1 { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; }
+    .topbar p { font-size: 0.82rem; color: var(--muted2); margin-top: 0.15rem; }
+    .topbar-actions { display: flex; gap: 0.8rem; align-items: center; }
+
+    .search-box {
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.5rem 1rem;
+      transition: border-color 0.2s;
+    }
+    .search-box:focus-within { border-color: var(--accent); }
+    .search-box input {
+      background: none; border: none; outline: none;
+      color: var(--text); font-family: 'Epilogue', sans-serif;
+      font-size: 0.85rem; width: 200px;
+    }
+    .search-box input::placeholder { color: var(--muted); }
+    .search-icon { color: var(--muted); font-size: 0.9rem; }
+
+    .btn {
+      padding: 0.55rem 1.2rem; border-radius: 7px;
+      font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; border: none; transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .btn-accent { background: var(--accent); color: var(--bg); }
+    .btn-accent:hover { background: #00FFD9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,229,195,0.25); }
+    .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--muted2); }
+    .btn-danger { background: rgba(255,77,109,0.1); color: var(--danger); border: 1px solid rgba(255,77,109,0.2); }
+    .btn-danger:hover { background: rgba(255,77,109,0.2); }
+    .btn-sm { padding: 0.35rem 0.8rem; font-size: 0.75rem; }
+
+    /* content */
+    .content { flex: 1; overflow-y: auto; padding: 2rem 2.5rem; }
+
+    /* stats row */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1.3rem 1.5rem;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: rgba(0,229,195,0.2); }
+    .stat-card .label { font-size: 0.72rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.6rem; }
+    .stat-card .value { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 700; }
+    .stat-card .sub { font-size: 0.75rem; color: var(--muted2); margin-top: 0.3rem; }
+    .stat-card .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; }
+    .dot-green { background: var(--accent); }
+    .dot-blue { background: var(--accent2); }
+    .dot-yellow { background: var(--warning); }
+    .dot-red { background: var(--danger); }
+
+    /* two col layout */
+    .two-col { display: grid; grid-template-columns: 1fr 360px; gap: 1.5rem; }
+
+    /* form panel */
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .panel-header {
+      padding: 1.2rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .panel-header h3 { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 600; }
+    .panel-header p { font-size: 0.75rem; color: var(--muted2); margin-top: 0.1rem; }
+    .panel-body { padding: 1.5rem; }
+
+    .form-group { margin-bottom: 1.1rem; }
+    .form-group label { display: block; font-size: 0.73rem; letter-spacing: 1px; text-transform: uppercase; color: var(--muted2); margin-bottom: 0.45rem; }
+    .form-group input, .form-group select {
+      width: 100%; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 7px;
+      color: var(--text); padding: 0.7rem 1rem;
+      font-family: 'Epilogue', sans-serif; font-size: 0.88rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+    .form-group input::placeholder { color: var(--muted); }
+    .form-group input.error { border-color: var(--danger); }
+    .form-group select option { background: var(--surface2); }
+    .error-msg { font-size: 0.72rem; color: var(--danger); margin-top: 0.3rem; display: none; }
+    .error-msg.show { display: block; }
+
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .btn-full { width: 100%; padding: 0.75rem; font-size: 0.88rem; margin-top: 0.5rem; }
+
+    /* badge */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 0.2rem 0.6rem; border-radius: 20px;
+      font-size: 0.7rem; font-weight: 500;
+    }
+    .badge-active { background: rgba(0,229,195,0.1); color: var(--accent); }
+    .badge-inactive { background: rgba(90,96,117,0.2); color: var(--muted2); }
+    .badge-vip { background: rgba(255,184,48,0.1); color: var(--warning); }
+
+    /* table */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { border-bottom: 1px solid var(--border); }
+    thead th {
+      padding: 0.9rem 1rem; text-align: left;
+      font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--muted); font-weight: 500;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      animation: rowIn 0.3s ease both;
+    }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody tr:last-child { border-bottom: none; }
+    td { padding: 1rem; font-size: 0.85rem; vertical-align: middle; }
+    .td-name { display: flex; align-items: center; gap: 0.8rem; }
+    .td-avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .td-email { color: var(--muted2); font-size: 0.8rem; }
+    .td-actions { display: flex; gap: 0.4rem; }
+
+    .empty-state {
+      text-align: center; padding: 4rem 2rem;
+      color: var(--muted);
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.4; }
+    .empty-state p { font-size: 0.9rem; }
+
+    /* modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7); z-index: 200;
+      align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 2rem; width: 380px;
+      animation: modalIn 0.25s ease;
+    }
+    .modal h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .modal p { color: var(--muted2); font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.5rem; }
+    .modal-actions { display: flex; gap: 0.8rem; justify-content: flex-end; }
+
+    /* toast */
+    .toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 0.9rem 1.3rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      font-size: 0.85rem; z-index: 300;
+      transform: translateY(100px); opacity: 0;
+      transition: all 0.3s; min-width: 260px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 3px solid var(--accent); }
+    .toast.error-toast { border-left: 3px solid var(--danger); }
+    .toast-icon { font-size: 1.1rem; }
+
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; } to { opacity: 1; }
+    }
+
+    /* responsive */
+    @media (max-width: 1100px) {
+      .two-col { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      aside { display: none; }
+      .topbar { padding: 1rem 1.5rem; }
+      .content { padding: 1.5rem; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .search-box input { width: 140px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside>
+  <div>
+    <div class="logo">Cliente<span>Pro</span></div>
+    <div class="logo-sub">CRM Sistema</div>
+    <div class="nav-section">Principal</div>
+    <div class="nav-item active"><span class="icon">👥</span> Clientes</div>
+    <div class="nav-item"><span class="icon">📊</span> Reportes</div>
+    <div class="nav-item"><span class="icon">📅</span> Actividad</div>
+    <div class="nav-section">Sistema</div>
+    <div class="nav-item"><span class="icon">⚙️</span> Configuración</div>
+    <div class="nav-item"><span class="icon">🔔</span> Notificaciones</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="avatar">TU</div>
+      <div class="user-info">
+        <h4>Tu Nombre</h4>
+        <p>Administrador</p>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+  <!-- topbar -->
+  <div class="topbar">
+    <div>
+      <h1>Gestión de Clientes</h1>
+      <p>Administra y organiza tu base de clientes</p>
+    </div>
+    <div class="topbar-actions">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Buscar cliente..." oninput="filtrarClientes()"/>
+      </div>
+      <button class="btn btn-ghost" onclick="exportarCSV()">⬇ Exportar</button>
+    </div>
+  </div>
+
+  <!-- content -->
+  <div class="content">
+
+    <!-- stats -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card">
+        <div class="label">Total clientes</div>
+        <div class="value" id="statTotal">0</div>
+        <div class="sub"><span class="dot dot-green"></span>Registrados</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Activos</div>
+        <div class="value" id="statActivos">0</div>
+        <div class="sub"><span class="dot dot-blue"></span>Este mes</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">VIP</div>
+        <div class="value" id="statVip">0</div>
+        <div class="sub"><span class="dot dot-yellow"></span>Clientes premium</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Inactivos</div>
+        <div class="value" id="statInactivos">0</div>
+        <div class="sub"><span class="dot dot-red"></span>Sin actividad</div>
+      </div>
+    </div>
+
+    <!-- two col -->
+    <div class="two-col">
+
+      <!-- TABLE -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h3>Lista de Clientes</h3>
+            <p id="tableCount">0 clientes registrados</p>
+          </div>
+          <select id="filterStatus" class="btn btn-ghost" style="cursor:pointer;" onchange="filtrarClientes()">
+            <option value="">Todos</option>
+            <option value="Activo">Activos</option>
+            <option value="VIP">VIP</option>
+            <option value="Inactivo">Inactivos</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+                <th>Registrado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaClientes"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">👤</div>
+            <p>No hay clientes registrados aún.<br/>Agrega tu primer cliente desde el formulario.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM -->
+      <div class="panel" style="align-self: start;">
+        <div class="panel-header">
+          <div>
+            <h3 id="formTitle">Nuevo Cliente</h3>
+            <p id="formSub">Completa los datos del cliente</p>
+          </div>
+          <span id="formBadge" style="font-size:1.3rem;">➕</span>
+        </div>
+        <div class="panel-body">
+          <div class="form-group">
+            <label>Nombre completo *</label>
+            <input type="text" id="inputNombre" placeholder="Ej. Ana García"/>
+            <div class="error-msg" id="errNombre">El nombre es requerido</div>
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico *</label>
+            <input type="email" id="inputEmail" placeholder="correo@ejemplo.com"/>
+            <div class="error-msg" id="errEmail">Ingresa un email válido</div>
+          </div>
+          <div class="form-row-2">
+            <div class="form-group">
+              <label>Teléfono *</label>
+              <input type="tel" id="inputTel" placeholder="+591 7xxxxxxx"/>
+              <div class="error-msg" id="errTel">Teléfono requerido</div>
+            </div>
+            <div class="form-group">
+              <label>Estado</label>
+              <select id="inputEstado">
+                <option value="Activo">Activo</option>
+                <option value="VIP">VIP</option>
+                <option value="Inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Ciudad</label>
+            <input type="text" id="inputCiudad" placeholder="Ej. La Paz"/>
+          </div>
+          <button class="btn btn-accent btn-full" id="btnGuardar" onclick="guardarCliente()">
+            ➕ Agregar Cliente
+          </button>
+          <button class="btn btn-ghost btn-full" id="btnCancelar" onclick="cancelarEdicion()" style="margin-top:0.5rem; display:none;">
+            Cancelar edición
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- MODAL CONFIRMACIÓN -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3>¿Eliminar cliente?</h3>
+    <p>Esta acción no se puede deshacer. El cliente será eliminado permanentemente del sistema.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmarEliminar()">Sí, eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon"></span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+  // ── COLORS para avatares ──
+  const COLORS = [
+    ['#00E5C3','#0D0F14'], ['#0099FF','#0D0F14'], ['#FFB830','#0D0F14'],
+    ['#FF4D6D','#fff'], ['#A855F7','#fff'], ['#22D3EE','#0D0F14']
+  ];
+
+  let clientes = JSON.parse(localStorage.getItem('clientepro_clientes') || '[]');
+  let editandoId = null;
+  let eliminandoId = null;
+
+  function guardar() {
+    localStorage.setItem('clientepro_clientes', JSON.stringify(clientes));
+  }
+
+  function getInitials(name) {
+    return name.split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase();
+  }
+
+  function getColor(id) {
+    return COLORS[id % COLORS.length];
+  }
+
+  function formatDate(ts) {
+    return new Date(ts).toLocaleDateString('es-BO', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  function badgeHTML(estado) {
+    const cls = estado === 'Activo' ? 'badge-active' : estado === 'VIP' ? 'badge-vip' : 'badge-inactive';
+    const dot = estado === 'Activo' ? '●' : estado === 'VIP' ? '★' : '○';
+    return `<span class="badge ${cls}">${dot} ${estado}</span>`;
+  }
+
+  function renderTabla(lista) {
+    const tbody = document.getElementById('tablaClientes');
+    const empty = document.getElementById('emptyState');
+    tbody.innerHTML = '';
+
+    if (lista.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    lista.forEach(c => {
+      const [bg, fg] = getColor(c.colorIdx);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>
+          <div class="td-name">
+            <div class="td-avatar" style="background:${bg};color:${fg}">${getInitials(c.nombre)}</div>
+            <div>
+              <div style="font-weight:500">${c.nombre}</div>
+              <div class="td-email">${c.email}</div>
+            </div>
+          </div>
+        </td>
+        <td>${c.telefono}</td>
+        <td>${badgeHTML(c.estado)}</td>
+        <td style="color:var(--muted2);font-size:0.78rem">${formatDate(c.fecha)}</td>
+        <td>
+          <div class="td-actions">
+            <button class="btn btn-ghost btn-sm" onclick="editarCliente(${c.id})">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="abrirModal(${c.id})">🗑️</button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function actualizarStats() {
+    document.getElementById('statTotal').textContent = clientes.length;
+    document.getElementById('statActivos').textContent = clientes.filter(c => c.estado === 'Activo').length;
+    document.getElementById('statVip').textContent = clientes.filter(c => c.estado === 'VIP').length;
+    document.getElementById('statInactivos').textContent = clientes.filter(c => c.estado === 'Inactivo').length;
+    document.getElementById('tableCount').textContent = `${clientes.length} cliente${clientes.length !== 1 ? 's' : ''} registrado${clientes.length !== 1 ? 's' : ''}`;
+  }
+
+  function filtrarClientes() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    const status = document.getElementById('filterStatus').value;
+    let lista = clientes.filter(c => {
+      const matchQ = c.nombre.toLowerCase().includes(q) || c.email.toLowerCase().includes(q) || c.telefono.includes(q);
+      const matchS = !status || c.estado === status;
+      return matchQ && matchS;
+    });
+    renderTabla(lista);
+  }
+
+  function validar() {
+    let ok = true;
+    const nombre = document.getElementById('inputNombre').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const tel = document.getElementById('inputTel').value.trim();
+
+    // reset
+    ['inputNombre','inputEmail','inputTel'].forEach(id => {
+      document.getElementById(id).classList.remove('error');
+    });
+    ['errNombre','errEmail','errTel'].forEach(id => {
+      document.getElementById(id).classList.remove('show');
+    });
+
+    if (!nombre) {
+      document.getElementById('inputNombre').classList.add('error');
+      document.getElementById('errNombre').classList.add('show');
+      ok = false;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      document.getElementById('inputEmail').classList.add('error');
+      document.getElementById('errEmail').classList.add('show');
+      ok = false;
+    }
+    if (!tel) {
+      document.getElementById('inputTel').classList.add('error');
+      document.getElementById('errTel').classList.add('show');
+      ok = false;
+    }
+    return ok;
+  }
+
+  function guardarCliente() {
+    if (!validar()) return;
+    const nombre = document.getElementById('inputNombre').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const tel = document.getElementById('inputTel').value.trim();
+    const estado = document.getElementById('inputEstado').value;
+    const ciudad = document.getElementById('inputCiudad').value.trim();
+
+    if (editandoId !== null) {
+      const idx = clientes.findIndex(c => c.id === editandoId);
+      clientes[idx] = { ...clientes[idx], nombre, email, telefono: tel, estado, ciudad };
+      mostrarToast('✅', 'Cliente actualizado correctamente', 'success');
+      cancelarEdicion();
+    } else {
+      const maxId = clientes.length > 0 ? Math.max(...clientes.map(c => c.id)) : 0;
+      clientes.push({
+        id: maxId + 1,
+        colorIdx: clientes.length,
+        nombre, email, telefono: tel, estado, ciudad,
+        fecha: Date.now()
+      });
+      mostrarToast('✅', 'Cliente agregado exitosamente', 'success');
+      limpiarForm();
+    }
+
+    guardar();
+    actualizarStats();
+    filtrarClientes();
+  }
+
+  function editarCliente(id) {
+    const c = clientes.find(x => x.id === id);
+    if (!c) return;
+    editandoId = id;
+    document.getElementById('inputNombre').value = c.nombre;
+    document.getElementById('inputEmail').value = c.email;
+    document.getElementById('inputTel').value = c.telefono;
+    document.getElementById('inputEstado').value = c.estado;
+    document.getElementById('inputCiudad').value = c.ciudad || '';
+    document.getElementById('formTitle').textContent = 'Editar Cliente';
+    document.getElementById('formSub').textContent = 'Modifica los datos';
+    document.getElementById('formBadge').textContent = '✏️';
+    document.getElementById('btnGuardar').textContent = '💾 Guardar cambios';
+    document.getElementById('btnCancelar').style.display = 'block';
+    document.getElementById('inputNombre').focus();
+  }
+
+  function cancelarEdicion() {
+    editandoId = null;
+    limpiarForm();
+    document.getElementById('formTitle').textContent = 'Nuevo Cliente';
+    document.getElementById('formSub').textContent = 'Completa los datos del cliente';
+    document.getElementById('formBadge').textContent = '➕';
+    document.getElementById('btnGuardar').textContent = '➕ Agregar Cliente';
+    document.getElementById('btnCancelar').style.display = 'none';
+  }
+
+  function limpiarForm() {
+    ['inputNombre','inputEmail','inputTel','inputCiudad'].forEach(id => {
+      document.getElementById(id).value = '';
+      document.getElementById(id).classList.remove('error');
+    });
+    document.getElementById('inputEstado').value = 'Activo';
+    ['errNombre','errEmail','errTel'].forEach(id => document.getElementById(id).classList.remove('show'));
+  }
+
+  function abrirModal(id) {
+    eliminandoId = id;
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function cerrarModal() {
+    eliminandoId = null;
+    document.getElementById('modalOverlay').classList.remove('open');
+  }
+
+  function confirmarEliminar() {
+    clientes = clientes.filter(c => c.id !== eliminandoId);
+    guardar();
+    actualizarStats();
+    filtrarClientes();
+    cerrarModal();
+    mostrarToast('🗑️', 'Cliente eliminado', 'error-toast');
+  }
+
+  function mostrarToast(icon, msg, tipo) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastMsg').textContent = msg;
+    t.className = `toast ${tipo} show`;
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function exportarCSV() {
+    if (clientes.length === 0) { mostrarToast('⚠️', 'No hay clientes para exportar', 'error-toast'); return; }
+    const header = 'Nombre,Email,Teléfono,Estado,Ciudad,Fecha\n';
+    const rows = clientes.map(c =>
+      `"${c.nombre}","${c.email}","${c.telefono}","${c.estado}","${c.ciudad||''}","${formatDate(c.fecha)}"`
+    ).join('\n');
+    const blob = new Blob([header + rows], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'clientes.csv'; a.click();
+    mostrarToast('⬇️', 'Archivo CSV exportado', 'success');
+  }
+
+  // cerrar modal al click fuera
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+  });
+
+  // init
+  actualizarStats();
+  filtrarClientes();
+</script>
+</body>
+</html>
